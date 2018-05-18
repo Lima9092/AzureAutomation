@@ -1,3 +1,5 @@
+
+
 # Create Resource Groups and Storage Accounts
   $csv = import-csv AzureStorage.csv 
   $csv | foreach-object {
@@ -26,70 +28,75 @@
   $container = New-AzureStorageContainer `
     -Name $containerName `
     -Permission Blob
-}
+  }
 
-# Configure Virtual Network and loop through Subnet and NSGs
-  $csv = import-csv AzureNetwork.csv 
+# Create Virtual Network
+  $csv = import-csv AzureNetwork.csv
   $csv | foreach-object {
   $Location = $_.'Location'
   $ResourceGroup = $_.'ResourceGroup'
+  $vnetAddress = $_.'Address'
   $VirtualNetworkName = $_.'VirtualNetwork'
-  $Address = $_.'Address'
-  $SubnetName = $_.'Subnet'
-  $SubnetAddress = $_.'Network'
-  $nsgName = "$SubnetName-nsg"
 
-  # Create Virtual Network Confgiurations Objects
-    $frontendSubnet = New-AzureRmVirtualNetworkSubnetConfig `
-      -Name $SubnetName `
-      -AddressPrefix $SubnetAddress
-
-    $virtualNetwork = New-AzureRmVirtualNetwork `
-     -Name $VirtualNetworkName `
-     -ResourceGroupName $ResourceGroup `
-      -Location $Location `
-      -AddressPrefix $vnetAddress `
-      -Subnet $frontendSubnet `
-      -Force
-
-  # Create RDP Rule
-    $rdpRule = New-AzureRmNetworkSecurityRuleConfig `
-      -Name RDP `
-      -Description "Allow RDP" `
-      -Access Allow `
-      -Protocol Tcp `
-      -Direction Inbound `
-      -Priority 100 `
-      -SourceAddressPrefix Internet `
-      -SourcePortRange * `
-      -DestinationAddressPrefix * `
-      -DestinationPortRange 3389
-
-  # Create network security groups
-    $networkSecurityGroup = New-AzureRmNetworkSecurityGroup `
-     -ResourceGroupName $ResourceGroup `
-     -Location $Location `
-     -Name $nsgName `
-     -SecurityRules $rdpRule
-
-  # Assign NSGs to Subnets
-    Set-AzureRmVirtualNetworkSubnetConfig `
-    -Name $SubnetName `
-    -VirtualNetwork $VirtualNetworkName `
-    -AddressPrefix $SubnetAddress `
-    -NetworkSecurityGroup $networkSecurityGroup
-
-    $virtualNetwork | Set-AzureRmVirtualNetwork
+  $virtualNetwork = New-AzureRmVirtualNetwork `
+    -ResourceGroupName $ResourceGroup `
+    -Location $Location `
+    -Name $VirtualNetworkName `
+    -AddressPrefix $vnetAddress `
+    -Force
   }
 
+ # Create RDP Rule
+  $rdpRule = New-AzureRmNetworkSecurityRuleConfig `
+    -Name RDP `
+    -Description "Allow RDP" `
+    -Access Allow `
+    -Protocol Tcp `
+    -Direction Inbound `
+    -Priority 100 `
+    -SourceAddressPrefix Internet `
+    -SourcePortRange * `
+    -DestinationAddressPrefix * `
+    -DestinationPortRange 3389
+
+  #Create subnets and NSGs
+  $csv = import-csv AzureNetwork.csv
+  $csv | foreach-object {
+  $VirtualNetworkName = $_.'VirtualNetwork'
+  $SubnetName = $_.'Subnet'
+  $SubnetAddress = $_.'Network'
+
+  $subnetConfig = Add-AzureRmVirtualNetworkSubnetConfig `
+    -Name $SubnetName `
+    -AddressPrefix $SubnetAddress `
+    -VirtualNetwork $virtualNetwork
+
+  # Create network security groups
+  $nsgName = "$SubnetName-nsg"
+  $networkSecurityGroup = New-AzureRmNetworkSecurityGroup `
+   -ResourceGroupName $ResourceGroup `
+   -Location $Location `
+   -Name $nsgName `
+   -SecurityRules $rdpRule
+
+  # Assign NSGs to Subnets
+  Set-AzureRmVirtualNetworkSubnetConfig `
+  -Name $SubnetName `
+  -VirtualNetwork $virtualNetwork `
+  -AddressPrefix $SubnetAddress `
+  -NetworkSecurityGroup $networkSecurityGroup
+  }
+
+  $virtualNetwork | Set-AzureRmVirtualNetwork
+
 # Create virtual machines
-  $csv = import-csv AzureVMS.csv 
+ $csv = import-csv AzureVMS.csv 
   $csv | foreach-object {
   $Location = $_.'Location'
   $ResourceGroup = $_.'ResourceGroup' 
   $VMName = $_.'VMName'
   $VMSize = $_.'VMSize' 
-  $VirtualNetwork = $_.'VirtualNetwork' 
+  $VirtualNetworkName = $_.'VirtualNetwork' 
   $Subnet = $_.'Subnet'
   $IPAddress = $_.'IPAddress'
   $PublisherName = $_.'PublisherName'
@@ -97,22 +104,28 @@
   $Skus = $_.'Skus'
   $osDiskSAUri = $_.'osDiskSAUri'
 
+  # Prompt for credentials
+  $cred = Get-Credential -Message "Enter a username and password for the virtual machine."
+
+  # Create username and password creds for the virtual machines
+  #$UserName='xxx'
+  #$Password='xxx'| ConvertTo-SecureString -Force -AsPlainText
+  #$Credential=New-Object PSCredential($UserName,$Password)
+
   #Create Virtual Network Interface
+  $SubnetID = Get-AzureRmVirtualNetwork `
+    -Name $VirtualNetworkName `
+    -ResourceGroupName $ResourceGroup | `
+    Get-AzureRmVirtualNetworkSubnetConfig `
+    -Name $Subnet | `
+    Select -ExpandProperty Id
   $nic = New-AzureRmNetworkInterface `
     -Name "$VMName-vnic" `
     -ResourceGroupName $ResourceGroup `
     -Location $Location `
-    -Subnet $Subnet `
+    -SubnetID $SubnetID `
     -PrivateIpAddress $IPAddress `
     -PublicIpAddressId $pip.Id `
-
-  # Prompt for credentials
-  #$cred = Get-Credential -Message "Enter a username and password for the virtual machine."
-
-  # Create username and password creds for the virtual machines
-  $UserName='ttpadmin'
-  $Password='Password@123'| ConvertTo-SecureString -Force -AsPlainText
-  $Credential=New-Object PSCredential($UserName,$Password)
 
   # Create the virtual machine configuration object
   $VirtualMachine = New-AzureRmVMConfig `
@@ -132,20 +145,17 @@
     -Skus $Skus `
     -Version "latest"
 
-  $osDiskName = "$VMName-osd"
-  $vhdDiskName = "$VMName.vhd"
-  $osDiskUri = $osDiskSAUri+$vhdDiskName -f `
-    $StorageAccount.PrimaryEndpoints.Blob.ToString(), `
-    $vmName.ToLower(), `
-    $osDiskName
-
   # Sets the operating system disk properties
   $VirtualMachine = Set-AzureRmVMOSDisk `
     -VM $VirtualMachine `
-    -Name $osDiskName `
-    -VhdUri $OsDiskUri `
+    -Name $VMName-osd `
+    -VhdUri $osDiskSAUri `
     -CreateOption FromImage | `
     Add-AzureRmVMNetworkInterface -Id $nic.Id
+
+  # Disables creating boot diagnostics drive
+    $VirtualMachine = Set-AzureRmVMBootDiagnostics `
+      -VM $VirtualMachine -Disable
 
   # Create the virtual machine
   New-AzureRmVM `
@@ -153,3 +163,4 @@
     -Location $Location `
     -VM $VirtualMachine
   }
+  

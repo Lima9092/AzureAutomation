@@ -1,0 +1,2 @@
+Location,ResourceGroup,StorageAccount,Redundancy
+SouthCentralUS,ttplab1-scu,ttplab1vmstorescu1,Standard_LRS
