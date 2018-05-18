@@ -1,5 +1,5 @@
-Install-Module -Name AzureRM
-connect-AzureRmAccount
+#Connect to Azure
+Connect-AzureRmAccount
 
 # Create Resource Groups and Storage Accounts
   $csv = import-csv AzureStorage.csv 
