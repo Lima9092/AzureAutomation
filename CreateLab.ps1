@@ -90,16 +90,7 @@ Connect-AzureRmAccount
 
   $virtualNetwork | Set-AzureRmVirtualNetwork
 
-# Create virtual machines
-
- # Prompt for credentials
-  $cred = Get-Credential -Message "Enter a username and password for the virtual machine."
-
-  # Create username and password creds for the virtual machines
-  #$UserName='xxx'
-  #$Password='xxx'| ConvertTo-SecureString -Force -AsPlainText
-  #$Credential=New-Object PSCredential($UserName,$Password)
-  
+# Create virtual machines  
  $csv = import-csv AzureVMS.csv 
   $csv | foreach-object {
   $Location = $_.'Location'
@@ -113,6 +104,14 @@ Connect-AzureRmAccount
   $Offer = $_.'Offer'
   $Skus = $_.'Skus'
   $osDiskSAUri = $_.'osDiskSAUri'
+
+  # Prompt for credentials
+  # $cred = Get-Credential -Message "Enter a username and password for the virtual machine."
+
+  # Create username and password creds for the virtual machines
+  $UserName='ttpadmin'
+  $Password='Password@123'| ConvertTo-SecureString -Force -AsPlainText
+  $Credential=New-Object PSCredential($UserName,$Password)
 
   #Create Virtual Network Interface
   $SubnetID = Get-AzureRmVirtualNetwork `
