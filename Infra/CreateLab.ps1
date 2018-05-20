@@ -48,7 +48,7 @@ Connect-AzureRmAccount
   }
 
  # Create RDP Rule
-  $rdpRule1 = New-AzureRmNetworkSecurityRuleConfig `
+  $rdpRule = New-AzureRmNetworkSecurityRuleConfig `
     -Name RDP `
     -Description "Allow RDP" `
     -Access Allow `
@@ -59,18 +59,6 @@ Connect-AzureRmAccount
     -SourcePortRange * `
     -DestinationAddressPrefix * `
     -DestinationPortRange 3389
-
-    $rdpRule2 = New-AzureRmNetworkSecurityRuleConfig `
-    -Name RDP `
-    -Description "Allow WinRM HTTPS" `
-    -Access Allow `
-    -Protocol Tcp `
-    -Direction Inbound `
-    -Priority 100 `
-    -SourceAddressPrefix Internet `
-    -SourcePortRange * `
-    -DestinationAddressPrefix * `
-    -DestinationPortRange 5986
 
   #Create subnets and NSGs
   $csv = import-csv AzureNetwork.csv
