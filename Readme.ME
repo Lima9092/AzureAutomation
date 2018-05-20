@@ -15,7 +15,7 @@ Tabs for singluar or split environments
 Hardcoded:
 VM's built with Std HDD storage to reduce cost
 No NSG's per VM just per subnet
-RDP TCP 3389 and WinRM HTTP TCP 5986 allowed through subnet NSGs for remote management
+RDP TCP 3389 allowed through subnet NSGs for remote management
 User can chose between pre-populated VM creds in script or being prompted (default prompt is commented out)
 
 
@@ -31,7 +31,7 @@ Then looks up VM Type and Domain from AzureVMs.csv for "Domain Controller" and "
 joins the domain for the VMs as required
 
 Hardcoded:
-Cannot currently configure a public DNS address for Azure VM's so must be run from an Azure hosted VM with network connectivity
+Added WinRM HTTP TCP 5986 to NSG. Cannot currently configure a public DNS address for Azure VM's through Powershell (portal only) so must be run from an Azure hosted VM with network connectivity
 to VMs. For this reason the script creates network peering of a hardcoded managament-vnet which houses the Management
 VM running the CreateLab.PS1 script to perform the AD tasks
 
