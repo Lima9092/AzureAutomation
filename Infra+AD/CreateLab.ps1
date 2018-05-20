@@ -46,21 +46,21 @@ Connect-AzureRmAccount
     -AddressPrefix $vnetAddress `
     -Force
 
-# Create network Peering to Management VNet
-$ManagementVnet = 'Management-vnet' 
-  Add-AzureRmVirtualNetworkPeering `
-  -Name "Mgt-Vnet-$virtualNetwork" `
-  -VirtualNetwork $ManagementVnet`
-  -RemoteVirtualNetworkId $virtualNetwork.Id
-
+  # Create network Peering to Management VNet
+  $ManagementVnet = 'Management-vnet' 
     Add-AzureRmVirtualNetworkPeering `
-  -Name "$virtualNetwork-Mgt-Vnet" `
-  -VirtualNetwork $virtualNetwork `
-  -RemoteVirtualNetworkId $ManagementVnet.Id
+    -Name "Mgtvnet-$VirtualNetworkName" `
+    -VirtualNetwork $ManagementVnet`
+    -RemoteVirtualNetworkId $VirtualNetworkName.Id
+
+      Add-AzureRmVirtualNetworkPeering `
+    -Name "$VirtualNetworkName-Mgtvnet" `
+    -VirtualNetwork $VirtualNetworkName `
+    -RemoteVirtualNetworkId $ManagementVnet.Id
   }
 
  # Create RDP Rule
-  $rdpRule1 = New-AzureRmNetworkSecurityRuleConfig `
+  $Rule1 = New-AzureRmNetworkSecurityRuleConfig `
     -Name RDP `
     -Description "Allow RDP" `
     -Access Allow `
@@ -72,8 +72,8 @@ $ManagementVnet = 'Management-vnet'
     -DestinationAddressPrefix * `
     -DestinationPortRange 3389
 
-    $rdpRule2 = New-AzureRmNetworkSecurityRuleConfig `
-    -Name RDP `
+    $Rule2 = New-AzureRmNetworkSecurityRuleConfig `
+    -Name WinRM-HTTPS `
     -Description "Allow WinRM HTTPS" `
     -Access Allow `
     -Protocol Tcp `
@@ -102,7 +102,7 @@ $ManagementVnet = 'Management-vnet'
    -ResourceGroupName $ResourceGroup `
    -Location $Location `
    -Name $nsgName `
-   -SecurityRules $rdpRule1, rdpRule2
+   -SecurityRules $Rule1, Rule2
 
   # Assign NSGs to Subnets
   Set-AzureRmVirtualNetworkSubnetConfig `
@@ -182,26 +182,21 @@ $ManagementVnet = 'Management-vnet'
     $VirtualMachine = Set-AzureRmVMBootDiagnostics `
       -VM $VirtualMachine -Disable
 
+  # Run custom script extension to create self-signed cert and enable WinRM
+    $VirtualMachine = Set-AzureRmVMCustomScriptExtension `
+      -ResourceGroupName $ResourceGroup `
+        -VMName $VMName `
+        -Location $Location `
+        -FileUri https://github.com/leejolley/AzureAutomation/tree/master/CustomScriptExtension `
+        -Run 'AzureWinRMHTTPS.ps1' `
+        -Name ConfigreWinRMHTTPS
+
   # Create the virtual machine
   New-AzureRmVM `
     -ResourceGroupName $ResourceGroup `
     -Location $Location `
     -VM $VirtualMachine
 
-   # Configure WinRM HTTPS for Remote Powershell  
-  $DNSName = $env:COMPUTERNAME 
-
-  # Ensure PS remoting is enabled
-  Enable-PSRemoting -Force
-      
-  # Create Self Signed certificate and store thumbprint 
-  $thumbprint = (New-SelfSignedCertificate `
-    -DnsName $DNSName `
-    -CertStoreLocation Cert:\LocalMachine\My).Thumbprint
-
-  # Run WinRM configuration on command line.
-  $cmd = "winrm set winrm/config/Listener?Address=*+Transport=HTTPS @{Hostname=""$DNSName""; CertificateThumbprint=""$thumbprint""}" 
-  cmd.exe /C $cmd
     }    
   
 # Configure AD Domains
