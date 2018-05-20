@@ -1,6 +1,8 @@
 Infra
 
-Tested and functioning
+Tested and functioning:
+Automates the creation of Resource Groups, Storage Accounts, Virtual Networks, Subnets, Network Security Groups,
+NSG Rules and Virtual Machines according to the CSV files generated from a pre-populated spreadsheet
 
 Azure Lab.xlsx
 Used to complete the virtual machine, storage and virtual network configuration details and export working CSV files
@@ -21,15 +23,16 @@ User can chose between pre-populated VM creds in script or being prompted (defau
 
 Infra + AD
 
-In Development
-
+In Development:
 Takes the infra and adds a custom script extension to run a powershell script from a github repository once the VM is
-built to create a self-signed certificate and configure WinRM over HTTPS to enable 
+built to create a self-signed certificate and configure WinRM over HTTPS to enable running script inside the VMs
+from a management sever. 
 
-Then looks for VM types of "Domain Controller" and "Member Server" and promotes DC's and joins the domain for the VMs
+Then looks up VM Type and Domain from AzureVMs.csv for "Domain Controller" and "Member Server" and promotes DC's and
+joins the domain for the VMs as required
 
 Hardcoded:
 Cannot currently configure a public DNS address for Azure VM's so must be run from an Azure hosted VM with network connectivity
-to VMs. For this reason the script creates network peering to managament-vnet which houses the Management
+to VMs. For this reason the script creates network peering of a hardcoded managament-vnet which houses the Management
 VM running the CreateLab.PS1 script to perform the AD tasks
 
