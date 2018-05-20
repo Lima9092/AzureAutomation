@@ -1,0 +1,2 @@
+Location,ResourceGroup,VirtualNetwork,Address,Subnet,Network
+SouthCentralUS,ttplab2-scu,ttplab2-scu-vnet-1,10.2.0.0/16,eucslan-scu-1,10.2.1.0/24

@@ -1,0 +1,3 @@
+Location,ResourceGroup,VMName,VMSize,VirtualNetwork,Subnet,IPAddress,ImageName,PublisherName,Offer,Skus,osDiskSAUri
+SouthCentralUS,ttplab2-scu,eucsadds01,Standard_B2s,ttplab2-scu-vnet-1,eucslan-scu-1,10.2.1.4,MicrosoftWindowsServer:WindowsServer:2012-R2-Datacenter,MicrosoftWindowsServer,WindowsServer,2012-R2-Datacenter,https://ttplab2vmstorescu1.blob.core.windows.net/osdisks/eucsadds01.vhd
+SouthCentralUS,ttplab2-scu,eucsadcs02,Standard_B2s,ttplab2-scu-vnet-1,eucslan-scu-1,10.2.1.6,MicrosoftWindowsServer:WindowsServer:2012-R2-Datacenter,MicrosoftWindowsServer,WindowsServer,2012-R2-Datacenter,https://ttplab2vmstorescu1.blob.core.windows.net/osdisks/eucsadcs02.vhd
