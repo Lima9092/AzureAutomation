@@ -1,0 +1,35 @@
+Infra
+
+Tested and functioning
+
+Azure Lab.xlsx
+Used to complete the virtual machine, storage and virtual network configuration details and export working CSV files
+Good lab candidates B series VM's pre-popultaed in down list and includes price estimates in spreadsheet
+Green=Drop down list
+Yellow=To be completed manually
+White=Automically generated
+CreateLab.PS1 script written to be flexible and work with geo split labs where quotas limit CPU or in 1 location
+Tabs for singluar or split environments
+
+Hardcoded:
+VM's built with Std HDD storage to reduce cost
+No NSG's per VM just per subnet
+RDP TCP 3389 and WinRM HTTP TCP 5986 allowed through subnet NSGs for remote management
+User can chose between pre-populated VM creds in script or being prompted (default prompt is commented out)
+
+
+
+Infra + AD
+
+In Development
+
+Takes the infra and adds a custom script extension to run a powershell script from a github repository once the VM is
+built to create a self-signed certificate and configure WinRM over HTTPS to enable 
+
+Then looks for VM types of "Domain Controller" and "Member Server" and promotes DC's and joins the domain for the VMs
+
+Hardcoded:
+Cannot currently configure a public DNS address for Azure VM's so must be run from an Azure hosted VM with network connectivity
+to VMs. For this reason the script creates network peering to managament-vnet which houses the Management
+VM running the CreateLab.PS1 script to perform the AD tasks
+
