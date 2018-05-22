@@ -66,7 +66,7 @@ Hosted Dependency: (Only required to configure WinRM HTTPS Remote Powershell)
 
 AzureWinRMHTTPS.ps1
 -------------------
-Script is coded to download the script from an Azure Storage Account. Can be configured to pull from another source such as a GitHub Repo.
+BuildAzure.ps1 is coded to download AzureWinRMHTTPS.ps1 from an Azure Storage Account. Can be configured to pull from another source such as a GitHub Repo.
 
 Enables WinRM HTTPS port 5986 through Windows Firewall to enable Remote Powershell.
 
