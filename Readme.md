@@ -75,7 +75,7 @@ Creates a self-signed certicate and configures WinRM to listen on HTTPS default 
 Note. If used for a production environment PKI certificates should be used!
 
 Dependencies:
-- Confgiuration in AzureBuilder.ps1 for a location and authorisation to download the AzureWinRMHTTPS.ps1 script
+- Prompted in AzureBuilder.ps1 for a Storage Account and corresponding Storage Access Key for the 'scripts' blob that contains AzureWinRMHTTPS.ps1 script.
 
 
 ConfigureAD.ps1
