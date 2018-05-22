@@ -1,11 +1,11 @@
 Automates the creation/deletion of the following Azure resources as defined in CSV files generated from a the 'Azure Lab.xlsx' spreadsheet
-	Resource Groups
-	Storage Accounts
-	Virtual Networks
-	Subnets
-	Network Security Groups
-	NSG Rules
-	Virtual Machines
+Resource Groups
+Storage Accounts
+Virtual Networks
+Subnets
+Network Security Groups
+NSG Rules
+Virtual Machines
 
 Azure Lab.xlsx
 --------------
