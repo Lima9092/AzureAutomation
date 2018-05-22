@@ -1,0 +1,6 @@
+Location,ResourceGroup,VirtualNetwork,Address,Subnet,Network
+SouthCentralUS,ttp1-scu,ttp1-scu-vnet,10.1.0.0/16,ttp1-scu-vnet-eucslan,10.1.1.0/24
+SouthCentralUS,ttp1-scu,ttp1-scu-vnet,10.1.0.0/16,ttp1-scu-vnet-userlan,10.1.2.0/24
+SouthCentralUS,ttp1-scu,ttp1-scu-vnet,10.1.0.0/16,ttp1-scu-vnet-userdmz,10.1.3.0/24
+SouthCentralUS,ttp1-scu,ttp1-scu-vnet,10.1.0.0/16,ttp1-scu-vnet-siamlan,10.1.4.0/24
+SouthCentralUS,ttp1-scu,ttp1-scu-vnet,10.1.0.0/16,ttp1-scu-vnet-siamdmz,10.1.5.0/24
