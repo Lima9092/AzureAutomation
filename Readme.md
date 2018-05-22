@@ -48,7 +48,7 @@ RDP TCP port 3389 allowed through subnet NSGs for remote management.
 
 WinRM HTTPS port 5986 allowed through subnet NSGs for remote Powershell.
 
-Choice between pre-populated VM creds in script or being prompted (default prompt is commented out).
+Script prompts for all required credentials and variables at the beginning of the script.
 
 Custom Script Extension is used during build to run a powershell script from a Storage Account Blob Container once the VM is
 built to create a self-signed certificate and configure WinRM over HTTPS which prepares the VMs for remote Powershell and further automation within the environment such as 'ConfigureAD.ps1'.
