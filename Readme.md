@@ -80,7 +80,7 @@ Dependencies:
 
 ConfigureAD.ps1
 ------------
-Installs and configures Active Directory Domain Controllers and Member Servers for the specified domain using Remote Powershell over SSL port 5896.
+Installs and configures Active Directory Domain Controllers and Member Servers for the specified domains using Remote Powershell over SSL port 5896.
 
 There is a lookup against 'Type' variable in 'AzureVMs.csv' to determine if the server is a 'Domain Controller', 'Member Server' or 'Stabndalone' server and which Active Directory Domain is relevant for that Virtual Machine. The script then promotes a DC or joins member serervs to their domain as per the configruation from 'AzureBuilder.xlsx' and subsequently 'AzureVMs.csv'.
 
