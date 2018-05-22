@@ -7,19 +7,19 @@ Automates the creation/deletion of the following Azure resources as defined in C
 - NSG Rules
 - Virtual Machines
 
-Azure Lab.xlsx
+AzureBuilder.xlsx
 --------------
 Used to complete the virtual machine, storage and virtual network configuration details and export working CSV files.
 
 Good lab candidates B series VM's pre-populated in drop down list and includes price estimates for lab.
 
 
-InstAzurePSH.ps1
+InstallAzurePSH.ps1
 ----------------
 Installs the modules required in Powershell to run the Azure Resource Manager Scripts
 
 
-CreateLab.ps1
+BuildAzure.ps1
 -------------
 Script written to be flexible and work with geo split labs where quotas limit CPU. Multiple 'Azure Lab.xlsx' files can be used and appended to one large multi location CSV files.
 
@@ -57,7 +57,7 @@ Dependencies:
 - Confgiuration in CreateLab.ps1 for a location and authorisation to download the AzureWinRMHTTPS.ps1 script
 
 
-ConfigAD.ps1
+ConfigureAD.ps1
 ------------
 Installs and configures Active Directory Domain Controllers and Member Servers for the specified domain using Remote Powershell over SSL port 5896.
 
@@ -67,7 +67,7 @@ Dependencies:
 AzureVMs.ps1
 
 
-DeleteLab.ps1
+DeleteAzure.ps1
 -------------
 Deletes all 'Resource Groups' (including all resources) defined in AzureStorage.csv.
 
