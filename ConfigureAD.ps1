@@ -1,8 +1,8 @@
-$UserName = "xxx"
-$Password = "xxx" 
-$DomUserName = "$DomainName\xxx"
-$DomPassword = "xxx"
-$SafePass = "xxx"
+$UserName = Read-Host "Enter administrator username for Azure VMs: (Cannot be 'admin' or 'administrator' in Azure)"
+$Password = Read-Host "Enter administrator password for Azure VMs:" -AsSecureString
+$DomUserName = "$DomainName\$UserName"
+$DomPassword = $Password
+$SafePass = Read-Host "Enter Safe Mode Administrator password for Domains in the Azure VM envinronment:" -AsSecureString
 
 # Configure Active Directory
   $csv = import-csv AzureVMs.csv 
@@ -30,7 +30,7 @@ $SafePass = "xxx"
     }
   
 # Wait for Domain Controllers to reboot
-Start-Sleep -s 300
+Start-Sleep -s 120
 
     if ($Type -eq "Member Server") {
 
@@ -51,7 +51,7 @@ Start-Sleep -s 300
   }
 
 # Wait for Servers to reboot
-Start-Sleep -s 300
+Start-Sleep -s 120
 
 # Shutdown VMs
 # Configure Active Directory

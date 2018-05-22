@@ -1,7 +1,7 @@
-$StorageAccountName = "xxx"
-$StorageAccountKey = "xxx"
-$UserName = "xxx"
-$Password = "xxx"
+$UserName = Read-Host "Enter administrator username for Azure VMs: (Cannot be 'admin' or 'administrator' in Azure)"
+$Password = Read-Host "Enter administrator password for Azure VMs:" -AsSecureString
+$StorageAccountName = Read-Host "Enter Storage Account Name where 'AzureWinRMHTTPS.ps1' resides in a 'scripts' Blob: (Only required for Remote Powershell)"
+$StorageAccountKey = Read-Host "Paste or type 64-bit storage key for access to 'scripts' Blob:"
 
 #Connect to Azure
 Connect-AzureRmAccount
