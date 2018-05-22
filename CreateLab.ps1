@@ -1,3 +1,8 @@
+$StorageAccountName = "xxx"
+$StorageAccountKey = "xxx"
+$UserName = "xxx"
+$Password = "xxx"
+
 #Connect to Azure
 Connect-AzureRmAccount
 
@@ -121,8 +126,8 @@ Connect-AzureRmAccount
   # $cred = Get-Credential -Message "Enter a username and password for the virtual machine."
 
   # Create username and password creds for the virtual machines
-  $UserName='ttpadmin'
-  $Password='Password@123'| ConvertTo-SecureString -Force -AsPlainText
+  $UserName = $UserName
+  $Password = $Password | ConvertTo-SecureString -Force -AsPlainText
   $Credential=New-Object PSCredential($UserName,$Password)
 
   #Create Virtual Network Interface
@@ -200,8 +205,8 @@ Connect-AzureRmAccount
     -VMName $VMName `
     -Name "WinRM" `
     -TypeHandlerVersion "1.1" `
-    -StorageAccountName "azuremgtvmstorescu1" `
-    -StorageAccountKey "R9Vx9Ga7nSogGJgG1qxQxs2s7UggkRPshBsCDkDBMHon6UjZ0MMaVlhMMZaZ8zbLwA/hdhvbgJzBz1KeBF50HQ==" `
+    -StorageAccountName $StorageAccountName `
+    -StorageAccountKey $StorageAccountKey `
     -FileName "AzureWinRMHTTPS.ps1" `
     -ContainerName "scripts"
   }
