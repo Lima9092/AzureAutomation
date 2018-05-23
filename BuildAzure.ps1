@@ -1,5 +1,5 @@
-$StorageAccountName = "azuremgtvmstorescu1"
-$StorageAccountKey = "R9Vx9Ga7nSogGJgG1qxQxs2s7UggkRPshBsCDkDBMHon6UjZ0MMaVlhMMZaZ8zbLwA/hdhvbgJzBz1KeBF50HQ=="
+$StorageAccountName = "xxx"
+$StorageAccountKey = "xxx"
 $UserName = Read-Host "Enter administrator username for Azure VMs: (Cannot be 'admin' or 'administrator' in Azure)"
 $Password = Read-Host "Enter administrator password for Azure VMs:" -AsSecureString
 
