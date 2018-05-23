@@ -92,6 +92,8 @@ DeleteAzure.ps1
 -------------
 Deletes all 'Resource Groups' (including all resources) defined in AzureStorage.csv.
 
+*** Warning: Remove this script if used in a business impacting environment and delete resources manually when required ***
+
 Dependencies:
 - AzureStorage.csv
 
