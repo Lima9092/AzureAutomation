@@ -1,7 +1,7 @@
+$StorageAccountName = "azuremgtvmstorescu1"
+$StorageAccountKey = "R9Vx9Ga7nSogGJgG1qxQxs2s7UggkRPshBsCDkDBMHon6UjZ0MMaVlhMMZaZ8zbLwA/hdhvbgJzBz1KeBF50HQ=="
 $UserName = Read-Host "Enter administrator username for Azure VMs: (Cannot be 'admin' or 'administrator' in Azure)"
 $Password = Read-Host "Enter administrator password for Azure VMs:" -AsSecureString
-$StorageAccountName = Read-Host "Enter Storage Account Name where 'AzureWinRMHTTPS.ps1' resides in a 'scripts' Blob: (Only required for Remote Powershell)"
-$StorageAccountKey = Read-Host "Paste or type 64-bit storage key for access to 'scripts' Blob:"
 
 #Connect to Azure
 Connect-AzureRmAccount
@@ -121,9 +121,6 @@ Connect-AzureRmAccount
   $Offer = $_.'Offer'
   $Skus = $_.'Skus'
   $osDiskSAUri = $_.'osDiskSAUri'
-
-  # Prompt for credentials
-  # $cred = Get-Credential -Message "Enter a username and password for the virtual machine."
 
   # Create username and password creds for the virtual machines
   $UserName = $UserName
