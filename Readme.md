@@ -109,3 +109,7 @@ CSV Files (ensure no dirty entries such as rogue ,,,,)
 - AzureStorage.csv
 - AzureNetwork.csv
 - AzureVMs.csv
+
+Known Bugs
+----------
+Windows 10 Professional Images cannot be caonfigured using the Secure Powershell configuration in this script so currently requires manually adding to a domain
