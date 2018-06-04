@@ -97,10 +97,6 @@ Deletes all 'Resource Groups' (including all resources) defined in AzureStorage.
 Dependencies:
 - AzureStorage.csv
 
-ShutdownAzureLab.ps1
---------------------
-Stops and deallocates the VMs in Azure to avoid charges whilst not in use
-
 Dependencies:
 - AzureVMs.CSV
 
