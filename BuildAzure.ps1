@@ -1,5 +1,5 @@
-$CSEStorageAccountName = "azuremgtvmstorescu1"
-$CSEStorageAccountKey = "R9Vx9Ga7nSogGJgG1qxQxs2s7UggkRPshBsCDkDBMHon6UjZ0MMaVlhMMZaZ8zbLwA/hdhvbgJzBz1KeBF50HQ=="
+$CSEStorageAccountName = "Enter Storage Account Name for Custom Script Extension Here"
+$CSEStorageAccountKey = "Enter Storage Account Key for Custom Script Extension Here"
 
 # Set Local Admin Credentials
 $UserName = Read-Host "Enter administrator username for Azure VMs: (Cannot be 'admin' or 'administrator' in Azure)"
