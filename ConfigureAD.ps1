@@ -1,8 +1,25 @@
+# Set Local Admin Credentials
 $UserName = Read-Host "Enter administrator username for Azure VMs: (Cannot be 'admin' or 'administrator' in Azure)"
-$Password = Read-Host "Enter administrator password for Azure VMs:" -AsSecureString
-$DomUserName = "$DomainName\$UserName"
-$DomPassword = $Password
-$SafePass = Read-Host "Enter Safe Mode Administrator password for Domains in the Azure VM envinronment:" -AsSecureString
+do {
+Write-Host "`nEnter administrator password for Azure VMs`n"
+$PrePassword = Read-Host "Password" -AsSecureString
+$Password = Read-Host "Confirm Password" -AsSecureString
+$PrePassword_text = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($PrePassword))
+$Password_text = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))
+}
+while ($PrePassword_text -ne $Password_text)
+Write-Host "`nPassword succesffuly set`n"
+
+# Set Safe Mode Admin Credentials
+do {
+Write-Host "`nEnter Safe Mode Administrator password for Domains`n"
+$PreSafePass = Read-Host "Password" -AsSecureString
+$SafePass = Read-Host "Confirm Password" -AsSecureString
+$PreSafePass_text = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($PreSafePass))
+$SafePass_text = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($SafePass))
+}
+while ($PreSafePass_text -ne $SafePass_text)
+Write-Host "`nPassword succesffuly set"
 
 # Configure Active Directory
   $csv = import-csv AzureVMs.csv 
@@ -10,14 +27,15 @@ $SafePass = Read-Host "Enter Safe Mode Administrator password for Domains in the
     $Type = $_.'Type'
     $DomainName = $_.'DomainName'
     $DNSName = $_.'DNSName'
+    $DNSIP = $_.'DNSIP'
     $DC = $_.'DC'
+    $DomUserName = "$DomainName\$UserName"
+    $DomPassword = $Password
 
     # Only perform Domain Controller tasks on Type = "Domain Controller"
     if ($Type -eq "Domain Controller") {
 
       # Set Credentials
-      $UserName = $UserName
-      $Password = $Password | ConvertTo-SecureString -Force -AsPlainText
       $Credential = New-Object PSCredential($UserName,$Password)
 
       # Establish Remote PS Session and configure Domain Controller
@@ -35,33 +53,15 @@ Start-Sleep -s 120
     if ($Type -eq "Member Server") {
 
     # Set Credentials
-    $UserName = $UserName
-    $Password = $Password | ConvertTo-SecureString -Force -AsPlainText
     $Credential=New-Object PSCredential($UserName,$Password)
-    $DomUserName = $DomUserName 
-    $DomPassword = $DomPassword | ConvertTo-SecureString -Force -AsPlainText
-    $DomCredential = New-Object PSCredential($UserName,$Password)
-
+    $DomCredential = New-Object PSCredential($DomUserName,$DomPassword)
+  
      # Establish Remote PS Session, add server/s to domain and restart
         $session = New-PSSession -ComputerName $DNSName -Credential $Credential -UseSSL -SessionOption(New-PSsessionOption -SkipCACheck -SkipCNCheck)
           Invoke-command -Session $session {
-             Add-Computer –DomainName $using:DomainName -Credential $Using:DomCredential -Restart –Force
+             $nicif = Get-NetAdapter | Select -ExpandProperty IfIndex
+             Set-DNSClientServerAddress –interfaceIndex $nicif –ServerAddresses (“$Using:DNSIP”) 
+             Add-Computer –DomainName $using:DomainName -LocalCredential $Using:Credential -DomainCredential $Using:DomCredential -Restart –Force
           }       
     }
-  }
-
-# Wait for Servers to reboot
-Start-Sleep -s 120
-
-# Shutdown VMs
-# Configure Active Directory
-  $csv = import-csv AzureVMs.csv 
-  $csv | foreach-object {
-    $DNSName = $_.'DNSName'
-
-     # Establish Remote PS Session and shutdown
-        $session = New-PSSession -ComputerName $DNSName -Credential $Credential -UseSSL -SessionOption(New-PSsessionOption -SkipCACheck -SkipCNCheck)
-          Invoke-command -Session $session {
-             Stop-Computer
-        }       
   }

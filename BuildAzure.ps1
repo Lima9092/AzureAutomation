@@ -1,7 +1,17 @@
-$StorageAccountName = "xxx"
-$StorageAccountKey = "xxx"
+$CSEStorageAccountName = "azuremgtvmstorescu1"
+$CSEStorageAccountKey = "R9Vx9Ga7nSogGJgG1qxQxs2s7UggkRPshBsCDkDBMHon6UjZ0MMaVlhMMZaZ8zbLwA/hdhvbgJzBz1KeBF50HQ=="
+
+# Set Local Admin Credentials
 $UserName = Read-Host "Enter administrator username for Azure VMs: (Cannot be 'admin' or 'administrator' in Azure)"
-$Password = Read-Host "Enter administrator password for Azure VMs:" -AsSecureString
+do {
+Write-Host "`nEnter administrator password for Azure VMs`n"
+$PrePassword = Read-Host "Password" -AsSecureString
+$Password = Read-Host "Confirm Password" -AsSecureString
+$PrePassword_text = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($PrePassword))
+$Password_text = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))
+}
+while ($PrePassword_text -ne $Password_text)
+Write-Host "`nPassword succesffuly set`n"
 
 #Connect to Azure
 Connect-AzureRmAccount
@@ -122,10 +132,8 @@ Connect-AzureRmAccount
   $Skus = $_.'Skus'
   $osDiskSAUri = $_.'osDiskSAUri'
 
-  # Create username and password creds for the virtual machines
-  $UserName = $UserName
-  $Password = $Password | ConvertTo-SecureString -Force -AsPlainText
-  $Credential=New-Object PSCredential($UserName,$Password)
+  # Create credential object for the virtual machines
+  $Credential = New-Object PSCredential($UserName,$Password)
 
   #Create Virtual Network Interface
   $SubnetID = Get-AzureRmVirtualNetwork `
@@ -202,8 +210,8 @@ Connect-AzureRmAccount
     -VMName $VMName `
     -Name "WinRM" `
     -TypeHandlerVersion "1.1" `
-    -StorageAccountName $StorageAccountName `
-    -StorageAccountKey $StorageAccountKey `
+    -StorageAccountName $CSEStorageAccountName `
+    -StorageAccountKey $CSEStorageAccountKey `
     -FileName "AzureWinRMHTTPS.ps1" `
     -ContainerName "scripts"
   }
