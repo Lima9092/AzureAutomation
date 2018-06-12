@@ -3,7 +3,7 @@ Introduction
 
 A set of scripts and a build tool in the form of an Excel Spreadsheet to provision a complete Azure Wintel Environment. There is a range of flexability within the spreadhseet and scripts. That said there are sections hardcoded based on cost effective decisions, such as unmanaged HDD storage over costlier managed SSDs. Currently the tools are ideal for dev/test labs or small environments.
 
-An Azure subscription and accopanying authorisation is required. 
+An Azure subscription and accompanying authorisation is required. 
 
 To perform further automation within the environment/s an Azure Storage Account with a Blob named 'scripts' and Storage Account Key is a pre-requisate. This allows a Custom Script Extension to be used to download a further script to configure the guest virtual machines for HTTPS Remote Powershell capability.
 
